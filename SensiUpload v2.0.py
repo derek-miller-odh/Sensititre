@@ -48,7 +48,7 @@ class DataFrameProcessor:
         naMask = self.mcimDF['Final Interpretation'].isna()
         self.mcimDF = self.mcimDF[naMask]
         #create list of enumbers from Collectiondate column as specimens needing IDs
-        self.enumbers = self.mcimDF['Collectiondate'].tolist()
+        self.enumbers = self.mcimDF['Casenumber'].tolist()
     def makeID(self):
         #select only rows with ProfileName 'CRE - Identification'
         idMask = self.df['ProfileName'] == 'CRE - Identification'
@@ -117,15 +117,16 @@ df.makeID()
 newASTM = ASTM()
 newASTM.open()
 #Iterate through enumbers and create ASTM orders
+print(df.enumbers)
 for i, n in enumerate(df.enumbers):
-    if df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].empty:
+    if df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].empty:
         print(f"No ID found for {n}")
-    elif df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item() in idDict:
-        tmpid = str(df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item())
+    elif df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item() in idDict:
+        tmpid = str(df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item())
         newASTM.addOrder(n, tmpid, i+1)
-        print(f"ID for {n}: {df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item()}")   
-    elif df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item() not in idDict:
-        print(f"ID for {n}: {df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item()} not in ID dictionary. Skipping.")
+        print(f"ID for {n}: {df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item()}")   
+    elif df.idDF.loc[df.idDF['Casenumbere'] == n, 'Final Interpretation'].item() not in idDict:
+        print(f"ID for {n}: {df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item()} not in ID dictionary. Skipping.")
 #Write orders to ASTM file
 for order in newASTM.orders:
     order.write(newASTM)
