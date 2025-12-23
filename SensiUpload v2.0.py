@@ -118,14 +118,20 @@ newASTM = ASTM()
 newASTM.open()
 #Iterate through enumbers and create ASTM orders
 for i, n in enumerate(df.enumbers):
-    if df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].empty:
-        print(f"No ID found for {n}")
-    elif df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item() in idDict:
-        tmpid = str(df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item())
-        newASTM.addOrder(n, tmpid, i+1)
-        print(f"ID for {n}: {df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item()}")   
-    elif df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item() not in idDict:
-        print(f"ID for {n}: {df.idDF.loc[df.idDF['Collectiondate'] == n, 'Final Interpretation'].item()} not in ID dictionary. Skipping.")
+    tmpval = list(df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'])
+    print(tmpval)
+    if len(tmpval) == 1:
+        if df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].empty:
+            print(f"No ID found for {n}")
+        elif df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item() in idDict:
+            tmpid = str(df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item())
+            newASTM.addOrder(n, tmpid, i+1)
+            print(f"ID for {n}: {df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item()}")   
+        elif df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item() not in idDict:
+            print(f"ID for {n}: {df.idDF.loc[df.idDF['Casenumber'] == n, 'Final Interpretation'].item()} not in ID dictionary. Skipping.")
+    elif len(tmpval) > 1:
+        print(f"Multiple IDs found for {n}. Skipping.")
+    
 #Write orders to ASTM file
 for order in newASTM.orders:
     order.write(newASTM)
